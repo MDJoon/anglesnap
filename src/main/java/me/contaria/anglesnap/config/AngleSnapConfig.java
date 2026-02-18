@@ -185,7 +185,14 @@ public class AngleSnapConfig {
         try {
             if (this.cameraPositions.isEmpty()) {
                 Files.deleteIfExists(this.cameraPositionsPath);
-                Files.deleteIfExists(this.cameraPositionsPath.getParent());
+                Path parent = this.cameraPositionsPath.getParent();
+                if (parent != null && Files.isDirectory(parent)) {
+                    try (var stream = Files.list(parent)) {
+                        if (stream.findAny().isEmpty()) {
+                            Files.delete(parent);
+                        }
+                    }
+                }
             } else {
                 Files.createDirectories(this.cameraPositionsPath.getParent());
                 Files.writeString(this.cameraPositionsPath, GSON.toJson(CameraPosEntry.listToJson(this.cameraPositions)));
@@ -292,7 +299,7 @@ public class AngleSnapConfig {
             AngleSnap.LOGGER.warn("[AngleSnap] Tried to create camera position but no positions are currently loaded!");
             return null;
         }
-        Vec3d cameraPos = MinecraftClient.getInstance().gameRenderer.getCamera().getPos();
+        Vec3d cameraPos = MinecraftClient.getInstance().gameRenderer.getCamera().getCameraPos();
         CameraPosEntry pos = new CameraPosEntry(
                 (int) (cameraPos.getX() * 100.0) / 100.0,
                 (int) (cameraPos.getY() * 100.0) / 100.0,

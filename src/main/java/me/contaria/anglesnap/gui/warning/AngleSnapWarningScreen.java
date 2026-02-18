@@ -9,7 +9,7 @@ import net.minecraft.text.Text;
 
 import java.util.function.Consumer;
 
-public class AngleSnapWarningScreen extends WarningScreen {
+public class    AngleSnapWarningScreen extends WarningScreen {
     private final Consumer<Boolean> onConfirm;
     private final Runnable onCancel;
 
